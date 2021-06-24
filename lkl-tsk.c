@@ -128,7 +128,7 @@ void add_data()
 
         if (new_ptr)
         {
-            ginps("\nNama           : ", new_ptr->name, NAME_LENGTH);
+            ginpsc("\nNama           : ", new_ptr->name);
             ginpsc("NIM            : ", new_ptr->nim);
             float_input("Nilai Tugas    : ", &new_ptr->task_score);
             float_input("Nilai Quiz     : ", &new_ptr->quiz_score);
@@ -206,7 +206,37 @@ void show_data_by_nim()
 
 void update_data_by_name()
 {
-    puts("should update data");
+    char query[NAME_LENGTH+1];
+
+    student_node *chc_ptr;
+    student_node *prv_chc_ptr;
+
+    prv_chc_ptr = NULL;
+    chc_ptr = head_ptr;
+
+    ginpsc("Masukkan nama yang dicari   : ", query);
+
+    while (chc_ptr)
+    {
+        if (strcmp(query, chc_ptr->name) == 0)
+        {
+            printf("\nMasukkan data nilai terbaru\n");
+            float_input("Nilai Tugas    : ", &chc_ptr->task_score);
+            float_input("Nilai Quiz     : ", &chc_ptr->quiz_score);
+            float_input("Nilai UTS      : ", &chc_ptr->uts_score);
+            float_input("Nilai UAS      : ", &chc_ptr->uas_score);
+            chc_ptr->final_score = get_fs(chc_ptr);
+            chc_ptr->ql = get_ql(chc_ptr->final_score);
+            printf("\nData telah diperbaharui\n");
+            break;
+        }
+        else
+        {
+            prv_chc_ptr = chc_ptr;
+            chc_ptr = chc_ptr->next_node;
+        }
+    }
+
     operation_menu();
 }
 
