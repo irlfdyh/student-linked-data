@@ -132,8 +132,9 @@ void add_data()
             float_input("Nilai UTS : ", &new_ptr->uts_score);
             float_input("Nilai UAS : ", &new_ptr->uas_score);
 
-            printf("%.2f", new_ptr->task_score);
-            printf("name %s", new_ptr->name);
+            new_ptr->next_node = head_ptr;
+            head_ptr = new_ptr;
+        
         }
         else
         {
@@ -150,7 +151,15 @@ void add_data()
 
 void show_all_data()
 {
-    puts("should show all data");
+    struct student_node *chc_ptr;
+    chc_ptr = head_ptr;
+
+    while(chc_ptr)
+    {
+        printf("nama %s\n", chc_ptr->name);
+        chc_ptr = chc_ptr->next_node;
+    }
+    
     operation_menu();
 }
 
