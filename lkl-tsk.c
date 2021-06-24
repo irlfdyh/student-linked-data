@@ -168,7 +168,6 @@ void show_all_data()
 
     puts("--------------------------------------\n");
     
-    call_end();
     operation_menu();
 }
 
@@ -213,7 +212,40 @@ void update_data_by_name()
 
 void delete_data()
 {
-    puts("should delete data");
+    char query[NAME_LENGTH+1];
+
+    student_node *chc_ptr;
+    student_node *prv_chc_ptr;
+
+    prv_chc_ptr = NULL;
+    chc_ptr = head_ptr;
+
+    ginpsc("Masukkan nim atau nama yang dicari   : ", query);
+
+    while (chc_ptr)
+    {
+        if ((strcmp(query, chc_ptr->nim) == 0) || (strcmp(query, chc_ptr->name) == 0))
+        {
+            if (prv_chc_ptr == NULL)
+            {
+                head_ptr = head_ptr->next_node;
+                free(chc_ptr);
+            }
+            else
+            {
+                prv_chc_ptr->next_node = chc_ptr->next_node;
+                free(chc_ptr);
+            }
+            printf("\nData telah dihapus\n");
+            break;
+        }
+        else
+        {
+            prv_chc_ptr = chc_ptr;
+            chc_ptr = chc_ptr->next_node;
+        }
+    }
+
     operation_menu();
 }
 
@@ -223,6 +255,7 @@ void ginps(char message[], char *obj, int mxvl)
 {
     char c; int i = 0, end = 0;
     printf("%s", message);
+    fflush(stdin);
     do
     {
         c = getchar();
