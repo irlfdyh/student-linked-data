@@ -6,6 +6,16 @@
 #define NAME_LENGTH 50
 #define NIM_LENGTH 8
 
+typedef struct
+{
+    char name[NAME_LENGTH+1], nim[NIM_LENGTH+1], ql;
+    float quiz_score, task_score, uts_score,
+        uas_score, final_score;
+    struct student_node *next_node;
+} student_node;
+
+student_node *head_ptr = NULL;
+
 void operation_menu();
 void operation_determiner();
 void operation_processor(int code);
@@ -19,18 +29,10 @@ void delete_data();
 void ginps(char message[], char *obj, int mxvl);
 void ginpsc(char message[], char *obj);
 void float_input(char *message, float *object);
-float get_fs();
-char get_hm(float fs);
-
-struct student_node
-{
-    char name[NAME_LENGTH+1], nim[NIM_LENGTH+1], ql;
-    float quiz_score, task_score, uts_score,
-        uas_score, final_score;
-    struct student_node *next_node;
-};
-
-struct student_node *head_ptr = NULL;
+float get_fs(student_node *);
+char get_ql(float fs);
+void print_single_data(student_node *);
+void call_end();
 
 // Driver program
 
@@ -61,6 +63,7 @@ void operation_determiner()
     short int opt;
     printf("Pilihan: "); 
     scanf("%hd", &opt);
+    fflush(stdin);
     puts("");
     operation_processor(opt);
 }
@@ -114,34 +117,35 @@ void operation_processor(int code)
 void add_data() 
 {
     char answer;
-    struct student_node *new_ptr;
+    student_node *new_ptr;
 
     puts("Menabahkan data baru");
 
     do
     {
 
-        new_ptr = (struct student_node *)malloc(sizeof(struct student_node));
+        new_ptr = (student_node *)malloc(sizeof(student_node));
 
         if (new_ptr)
         {
-            ginps("Nama     : ", new_ptr->name, NAME_LENGTH);
-            ginpsc("NIM       : ", new_ptr->nim);
-            float_input("Nilai Tugas : ", &new_ptr->task_score);
-            float_input("Nilai Quiz : ", &new_ptr->quiz_score);
-            float_input("Nilai UTS : ", &new_ptr->uts_score);
-            float_input("Nilai UAS : ", &new_ptr->uas_score);
+            ginps("\nNama           : ", new_ptr->name, NAME_LENGTH);
+            ginpsc("NIM            : ", new_ptr->nim);
+            float_input("Nilai Tugas    : ", &new_ptr->task_score);
+            float_input("Nilai Quiz     : ", &new_ptr->quiz_score);
+            float_input("Nilai UTS      : ", &new_ptr->uts_score);
+            float_input("Nilai UAS      : ", &new_ptr->uas_score);
+            new_ptr->final_score = get_fs(new_ptr);
+            new_ptr->ql = get_ql(new_ptr->final_score);
 
             new_ptr->next_node = head_ptr;
             head_ptr = new_ptr;
-        
         }
         else
         {
             puts("Memori tidak cukup..!");
         }
 
-        printf("Masukkan data lagi? (Y/T) = ");
+        printf("\nMasukkan data lagi? (Y/T) = ");
         scanf(" %c", &answer);
 
     } while (answer == 'Y');
@@ -151,21 +155,53 @@ void add_data()
 
 void show_all_data()
 {
-    struct student_node *chc_ptr;
+    student_node *chc_ptr;
     chc_ptr = head_ptr;
+
+    puts("\n--------------------------------------\n");
 
     while(chc_ptr)
     {
-        printf("nama %s\n", chc_ptr->name);
+        print_single_data(chc_ptr);
         chc_ptr = chc_ptr->next_node;
     }
+
+    puts("--------------------------------------\n");
     
+    call_end();
     operation_menu();
 }
 
 void show_data_by_nim()
 {
-    puts("should show single data");
+    char nim[NIM_LENGTH+1];
+
+    student_node *chc_ptr;
+    student_node *prv_chc_ptr;
+
+    prv_chc_ptr = NULL;
+    chc_ptr = head_ptr;
+
+    ginpsc("Masukkan nim yang dicari   : ", nim);
+
+    puts("\n--------------------------------------\n");
+
+    while (chc_ptr)
+    {
+        if (strcmp(nim, chc_ptr->nim) != 0)
+        {
+            prv_chc_ptr = chc_ptr;
+            chc_ptr = chc_ptr->next_node;
+        }
+        else
+        {
+            print_single_data(chc_ptr);
+            break;
+        }
+    }
+
+    puts("--------------------------------------\n");
+
     operation_menu();
 }
 
@@ -215,12 +251,56 @@ void float_input(char *message, float *object)
     scanf("%f", object);
 }
 
-float get_fs()
+float get_fs(student_node *data)
 {
-
+    return (0.2 * data->task_score) +
+        (0.2 * data->quiz_score) +
+        (0.3 * data->uts_score) +
+        (0.3 * data->uas_score);
 }
 
-char get_hm(float fs)
+char get_ql(float fs)
 {
+    if (fs >= 78 && fs <= 100)
+    {
+        return 'A';
+	}
+	else if (fs >= 65 && fs <= 77.99 )
+    {
+		return 'B';
+	} 
+	else if (fs >= 45 && fs<= 64.99) 
+    {
+		return 'C';
+	}
+	else if (fs >= 26 && fs <= 44.99)
+    {
+		return 'D';
+	}
+	else if (fs >= 0 && fs <= 25.99)
+    {
+		return 'E';
+	}
+	else
+	{
+		return 'Z';
+	}
+}
 
+void print_single_data(student_node *data)
+{
+    printf("Nama        : %s\n", data->name);
+    printf("NIM         : %s\n", data->nim);
+    printf("Nilai Tugas : %.2f\n", data->task_score);
+    printf("Nilai Quiz  : %.2f\n", data->quiz_score);
+    printf("Nilai UTS   : %.2f\n", data->uts_score);
+    printf("Nilai UAS   : %.2f\n", data->uas_score);
+    printf("Nilai Akhir : %.2f\n", data->final_score);
+    printf("Huruf Mutu  : %c\n\n", data->ql);
+}
+
+void call_end()
+{
+    printf("\nTekan tombol apapun untuk kembali\n");
+    getchar();
 }
