@@ -6,15 +6,17 @@
 #define NAME_LENGTH 50
 #define NIM_LENGTH 8
 
-typedef struct
+struct student_node
 {
     char name[NAME_LENGTH+1], nim[NIM_LENGTH+1], ql;
     float quiz_score, task_score, uts_score,
         uas_score, final_score;
     struct student_node *next_node;
-} student_node;
+};
 
-student_node *head_ptr = NULL;
+typedef struct student_node snode;
+
+struct student_node *head_ptr = NULL;
 
 void operation_menu();
 void operation_determiner();
@@ -29,10 +31,9 @@ void delete_data();
 void ginps(char message[], char *obj, int mxvl);
 void ginpsc(char message[], char *obj);
 void float_input(char *message, float *object);
-float get_fs(student_node *);
+float get_fs(snode *);
 char get_ql(float fs);
-void print_single_data(student_node *);
-void call_end();
+void print_single_data(snode *);
 
 // Driver program
 
@@ -117,14 +118,14 @@ void operation_processor(int code)
 void add_data() 
 {
     char answer;
-    student_node *new_ptr;
+    struct student_node *new_ptr;
 
     puts("Menabahkan data baru");
 
     do
     {
 
-        new_ptr = (student_node *)malloc(sizeof(student_node));
+        new_ptr = (struct student_node *)malloc(sizeof(struct student_node));
 
         if (new_ptr)
         {
@@ -155,7 +156,7 @@ void add_data()
 
 void show_all_data()
 {
-    student_node *chc_ptr;
+    struct student_node *chc_ptr;
     chc_ptr = head_ptr;
 
     puts("\n--------------------------------------\n");
@@ -175,8 +176,8 @@ void show_data_by_nim()
 {
     char nim[NIM_LENGTH+1];
 
-    student_node *chc_ptr;
-    student_node *prv_chc_ptr;
+    struct student_node *chc_ptr;
+    struct student_node *prv_chc_ptr;
 
     prv_chc_ptr = NULL;
     chc_ptr = head_ptr;
@@ -208,8 +209,8 @@ void update_data_by_name()
 {
     char query[NAME_LENGTH+1];
 
-    student_node *chc_ptr;
-    student_node *prv_chc_ptr;
+    struct student_node *chc_ptr;
+    struct student_node *prv_chc_ptr;
 
     prv_chc_ptr = NULL;
     chc_ptr = head_ptr;
@@ -220,6 +221,7 @@ void update_data_by_name()
     {
         if (strcmp(query, chc_ptr->name) == 0)
         {
+            print_single_data(chc_ptr);
             printf("\nMasukkan data nilai terbaru\n");
             float_input("Nilai Tugas    : ", &chc_ptr->task_score);
             float_input("Nilai Quiz     : ", &chc_ptr->quiz_score);
@@ -244,8 +246,8 @@ void delete_data()
 {
     char query[NAME_LENGTH+1];
 
-    student_node *chc_ptr;
-    student_node *prv_chc_ptr;
+    struct student_node *chc_ptr;
+    struct student_node *prv_chc_ptr;
 
     prv_chc_ptr = NULL;
     chc_ptr = head_ptr;
@@ -314,7 +316,7 @@ void float_input(char *message, float *object)
     scanf("%f", object);
 }
 
-float get_fs(student_node *data)
+float get_fs(snode *data)
 {
     return (0.2 * data->task_score) +
         (0.2 * data->quiz_score) +
@@ -350,7 +352,7 @@ char get_ql(float fs)
 	}
 }
 
-void print_single_data(student_node *data)
+void print_single_data(snode *data)
 {
     printf("Nama        : %s\n", data->name);
     printf("NIM         : %s\n", data->nim);
@@ -360,10 +362,4 @@ void print_single_data(student_node *data)
     printf("Nilai UAS   : %.2f\n", data->uas_score);
     printf("Nilai Akhir : %.2f\n", data->final_score);
     printf("Huruf Mutu  : %c\n\n", data->ql);
-}
-
-void call_end()
-{
-    printf("\nTekan tombol apapun untuk kembali\n");
-    getchar();
 }
