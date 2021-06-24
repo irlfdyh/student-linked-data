@@ -17,6 +17,7 @@ void update_data_by_name();
 void delete_data();
 
 void ginps(char message[], char *obj, int mxvl);
+void ginpsc(char message[], char *obj);
 void float_input(char *message, float *object);
 float get_fs();
 char get_hm(float fs);
@@ -117,24 +118,32 @@ void add_data()
 
     puts("Menabahkan data baru");
 
-    new_ptr = (struct student_node *)malloc(sizeof(struct student_node));
-
-    if (new_ptr)
+    do
     {
-        ginps("Nama     : ", new_ptr->name, NAME_LENGTH);
-        ginps("NIM       : ", new_ptr->nim, NIM_LENGTH);
-        float_input("Nilai Tugas : ", &new_ptr->task_score);
-        float_input("Nilai Quiz : ", &new_ptr->quiz_score);
-        float_input("Nilai UTS : ", &new_ptr->uts_score);
-        float_input("Nilai UAS : ", &new_ptr->uas_score);
 
-        printf("%.2f", new_ptr->task_score);
-        printf("name %s", new_ptr->name);
-    }
-    else
-    {
-        puts("Memori tidak cukup..!");
-    }
+        new_ptr = (struct student_node *)malloc(sizeof(struct student_node));
+
+        if (new_ptr)
+        {
+            ginps("Nama     : ", new_ptr->name, NAME_LENGTH);
+            ginpsc("NIM       : ", new_ptr->nim);
+            float_input("Nilai Tugas : ", &new_ptr->task_score);
+            float_input("Nilai Quiz : ", &new_ptr->quiz_score);
+            float_input("Nilai UTS : ", &new_ptr->uts_score);
+            float_input("Nilai UAS : ", &new_ptr->uas_score);
+
+            printf("%.2f", new_ptr->task_score);
+            printf("name %s", new_ptr->name);
+        }
+        else
+        {
+            puts("Memori tidak cukup..!");
+        }
+
+        printf("Masukkan data lagi? (Y/T) = ");
+        scanf(" %c", &answer);
+
+    } while (answer == 'Y');
 
     operation_menu();
 }
@@ -183,6 +192,12 @@ void ginps(char message[], char *obj, int mxvl)
         }
     }
     while (end == 1);
+}
+
+void ginpsc(char message[], char *obj)
+{
+    printf("%s", message);
+    scanf("%s", obj);
 }
 
 void float_input(char *message, float *object)
